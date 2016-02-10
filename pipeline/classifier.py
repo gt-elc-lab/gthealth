@@ -7,6 +7,13 @@ class Classifier(object):
         raise NotImplementedError()
 
 class SimpleClassifier(object):
-
+    
     def classify(self, submission):
-        return True
+        checker = False;
+        arrayWords = submission.split();
+        for word in arrayWords:
+            for x in word:
+                if x in string:
+                    checker = True;
+        return checker;
+            
