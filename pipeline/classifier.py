@@ -17,6 +17,6 @@ class SimpleClassifier(object):
         arrayWords = submission.split();
         for word in arrayWords:
             if word in keyWords:
-                checker = True;
-        return checker;
+                return True;
+        return false;
             
