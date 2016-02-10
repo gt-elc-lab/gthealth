@@ -14,7 +14,7 @@ class SimpleClassifier(object):
                     'fuck', 'fucking', 'hate', 'counseling', 'counselor', 'psychiatrist',
                     'hate', 'death', 'die', 'heartbroken', 'lonely', 'hopeless', 'scared',
                     'suffer', 'failure', 'therapy', 'cry', 'alone', 'loser']);
-        arrayWords = submission.split();
+        arrayWords = nltk.tokenize.word_tokenize(keyWords);
         for word in arrayWords:
             if word in keyWords:
                 return True;
