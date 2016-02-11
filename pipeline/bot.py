@@ -12,15 +12,15 @@ class RedditBot(object):
     def login(self, username=config.BOT_CREDENTIALS['username'], password=config.BOT_CREDENTIALS['password']):
         """
         Instantiate Reddit login.
-        
+
         Args:
             username (str)
             password (str)
         """
         self.reddit.login(username, password)
 
-    def submit(self, subreddit, title, url=None, text=None):
-        self.reddit.submit(subreddit, title, url=url, text=text)
+    def submit(self, subreddit, title, text, url=None):
+        self.reddit.submit(subreddit, title, text=text, url=url)
 
     def random_name(self, length=10):
         """
