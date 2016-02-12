@@ -1,8 +1,10 @@
 import flask
 
 import model
+import pipeline.tagging
 
 app = flask.Flask(__name__)
+app.register_blueprint(pipeline.tagging.app, url_prefix='/tagging')
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -35,6 +37,8 @@ def login():
 @app.route('/activate/<string:_id>', methods=['GET'])
 def activate(_id):
     return
+
+
 
 if __name__ == '__main__':
     app.debug = True

@@ -12,9 +12,9 @@ class Crawler(object):
 
     def run(self):
         r = praw.Reddit(user_agent='gthealth')
-        submissions = filter(self.classifier.classify,
+        posts = map(self.post_from_praw_submission,
             r.get_subreddit('depression').get_new(limit=20))
-        for post in map(self.post_from_praw_submission, submissions):
+        for post in filter(self.classifier.classify, posts):
             post.save()
 
     def post_from_praw_submission(self, submission):
@@ -23,5 +23,10 @@ class Crawler(object):
                           title=submission.title,
                           created=datetime.utcfromtimestamp(
                             submission.created_utc))
+
+def download_corpus():
+    """ Performs a search for depression related posts on all of our subreddits"""
+    pass
+
 if __name__ == '__main__':
     Crawler(classifier.SimpleClassifier()).run()

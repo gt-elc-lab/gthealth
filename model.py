@@ -21,3 +21,7 @@ class User(Document):
 
     def verify_password(self, password):
         return pwd_context.verify(password, self.password)
+
+class Sample(Document):
+    content = StringField()
+    tag = BooleanField(default=False)
