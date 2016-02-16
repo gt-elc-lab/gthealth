@@ -1,0 +1,35 @@
+<div class="col-md-3 col-md-offset-4">
+  <div class="page-header">
+      <h1 class="text-center">login<small></small></h1>
+  </div>
+  <div class="row margin-top-md">
+      <div class="alert alert-danger alert-dismissible"
+         role="alert"
+         ng-show="Login.error">
+        {{Login.error.message}}
+     </div>
+
+      <!-- email -->
+      <div class="form-group">
+          <input class="form-control"
+                 id="focusedInput"
+                 type="text"
+                 placeholder="email"
+                 ng-model="Login.email"
+                 >
+      </div>
+      <!-- password -->
+      <div class="form-group">
+          <input class="form-control"
+                 id="focusedInput"
+                 type="password"
+                 placeholder="password"
+                 ng-model="Login.password"
+                 >
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block"
+              ng-click="Login.login()">Login</button>
+      <p class="text-center">Don't have an account ? <a ui-sref="home.register" class="text-info">Sign up.</a></p>
+  </div>
+</div>
