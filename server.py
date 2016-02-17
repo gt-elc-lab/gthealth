@@ -9,7 +9,7 @@ CORS(app)
 
 app.register_blueprint(pipeline.tagging.app, url_prefix='/tagging')
 
- def make_user_response(model):
+def make_user_response(model):
         return {
             'id': str(model.id),
             'email': model.email,
@@ -42,6 +42,13 @@ def login():
         raise AuthenticationError('Incorrect username or password.')
     return flask.jsonify(make_user_response(user))
 
+
+@app.route('/annotate', methods=['POST'])
+def annotate():
+    post = model.Sample.objects.get(r_id=flask.request.json.get('_id'))
+    post.tag = flask.request.json.get('annotation')
+    post.save()
+    
 
 @app.route('/activate/<string:_id>', methods=['GET'])
 def activate(_id):

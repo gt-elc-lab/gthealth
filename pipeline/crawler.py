@@ -16,6 +16,16 @@ class Crawler(object):
         for post in filter(self.classifier.classify, posts):
             post.save()
 
+    def runSample(self, subreddit='depression'):
+        r = praw.Reddit(user_agent='gthealth')
+        posts = map(self.sample_from_praw_submission,
+            r.get_subreddit(subreddit).get_new(limit=20))
+        for post in filter(self.classifier.classify, posts):
+            post.save()
+
+    def sample_from_praw_submission(self, submission):
+        return model.Sample(r_id=submission.id, content=submission.selftext)
+
     def post_from_praw_submission(self, submission):
         return model.Post(r_id=submission.id,
                           content=submission.selftext,
@@ -26,7 +36,9 @@ class Crawler(object):
 def download_corpus():
     """ Performs a search for depression related posts on all of our subreddits"""
     for school in config.SUBREDDITS:
-        Crawler(classifier.SimpleClassifier()).run(subreddit = school['subreddit'])
+        print 'Fetching classified posts from %s' % (school['name'])
+        Crawler(classifier.SimpleClassifier()).runSample(
+          subreddit = school['subreddit'])
         
 
 if __name__ == '__main__':
