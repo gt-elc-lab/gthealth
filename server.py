@@ -41,13 +41,6 @@ def login():
     if not user.verify_password(password):
         raise AuthenticationError('Incorrect username or password.')
     return flask.jsonify(make_user_response(user))
-
-
-@app.route('/annotate', methods=['POST'])
-def annotate():
-    post = model.Sample.objects.get(r_id=flask.request.json.get('_id'))
-    post.tag = flask.request.json.get('annotation')
-    post.save()
     
 
 @app.route('/activate/<string:_id>', methods=['GET'])

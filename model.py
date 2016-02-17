@@ -23,6 +23,5 @@ class User(Document):
         return pwd_context.verify(password, self.password)
 
 class Sample(Document):
-    r_id = StringField(primary_key=True)
     content = StringField()
     tag = BooleanField(default=False)

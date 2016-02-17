@@ -24,7 +24,7 @@ class Crawler(object):
             post.save()
 
     def sample_from_praw_submission(self, submission):
-        return model.Sample(r_id=submission.id, content=submission.selftext)
+        return model.Sample(content=submission.selftext)
 
     def post_from_praw_submission(self, submission):
         return model.Post(r_id=submission.id,
