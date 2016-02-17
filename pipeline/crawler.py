@@ -1,6 +1,5 @@
 from datetime import datetime
 import praw
-
 import config
 import classifier
 import model
@@ -10,10 +9,10 @@ class Crawler(object):
     def __init__(self, classifier):
         self.classifier = classifier
 
-    def run(self):
+    def run(self, subreddit='depression'):
         r = praw.Reddit(user_agent='gthealth')
         posts = map(self.post_from_praw_submission,
-            r.get_subreddit('depression').get_new(limit=20))
+            r.get_subreddit(subreddit).get_new(limit=20))
         for post in filter(self.classifier.classify, posts):
             post.save()
 
@@ -26,7 +25,10 @@ class Crawler(object):
 
 def download_corpus():
     """ Performs a search for depression related posts on all of our subreddits"""
-    pass
+    for school in config.SUBREDDITS:
+        Crawler(classifier.SimpleClassifier()).run(subreddit = school['subreddit'])
+        
 
 if __name__ == '__main__':
-    Crawler(classifier.SimpleClassifier()).run()
+    #Crawler(classifier.SimpleClassifier()).run()
+    download_corpus()
