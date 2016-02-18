@@ -11,22 +11,17 @@ class Crawler(object):
 
     def run(self, subreddit='depression'):
         r = praw.Reddit(user_agent='gthealth')
-        posts = map(self.post_from_praw_submission,
+        posts = map(Crawler.post_from_praw_submission,
             r.get_subreddit(subreddit).get_new(limit=20))
         for post in filter(self.classifier.classify, posts):
             post.save()
 
-    def runSample(self, subreddit='depression'):
-        r = praw.Reddit(user_agent='gthealth')
-        posts = map(self.sample_from_praw_submission,
-            r.get_subreddit(subreddit).get_new(limit=20))
-        for post in filter(self.classifier.classify, posts):
-            post.save()
+    @staticmethod
+    def sample_from_praw_submission(submission):
+        return model.Sample(r_id=submission.id, content=submission.selftext)
 
-    def sample_from_praw_submission(self, submission):
-        return model.Sample(content=submission.selftext)
-
-    def post_from_praw_submission(self, submission):
+    @staticmethod
+    def post_from_praw_submission(submission):
         return model.Post(r_id=submission.id,
                           content=submission.selftext,
                           title=submission.title,
@@ -35,12 +30,18 @@ class Crawler(object):
 
 def download_corpus():
     """ Performs a search for depression related posts on all of our subreddits"""
+    r = praw.Reddit(user_agent='gthealth')
     for school in config.SUBREDDITS:
-        print 'Fetching classified posts from %s' % (school['name'])
-        Crawler(classifier.SimpleClassifier()).runSample(
-          subreddit = school['subreddit'])
+        print 'Searcing posts from %s' % (school['name'])
+        query = ' OR '.join(config.keywords)
+        samples = map(Crawler.sample_from_praw_submission, 
+            r.search(query, subreddit=school['subreddit'], limit=1000))
+        print '    found %d results' % (len(samples))
+        for sample in samples:
+            sample.save()
+    return
         
 
 if __name__ == '__main__':
-    #Crawler(classifier.SimpleClassifier()).run()
+    # Crawler(classifier.SimpleClassifier()).run()
     download_corpus()

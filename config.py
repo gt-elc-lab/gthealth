@@ -25,3 +25,9 @@ SUBREDDITS = [
             {'name': 'University of Missouri', 'subreddit': 'mizzou'},
             {'name': 'University of Georgia', 'subreddit': 'UGA'}
       ]
+
+keywords = set(['depressed', 'depression', 'suicide', 'suicidal', 'kill', 'sad',
+                    'unhappy', 'fuck', 'fucking', 'hate', 'counseling',
+                    'counselor', 'psychiatrist', 'hate', 'death', 'die',
+                    'heartbroken', 'lonely', 'hopeless', 'scared', 'suffer',
+                    'failure', 'therapy', 'cry', 'alone', 'loser']);
