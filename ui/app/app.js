@@ -12,6 +12,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
     $httpProvider.interceptors.push(function() {
         var baseUrl = 'http://localhost:5000';
         return {
+            // All json requests should be directed to the api.
             request: function(config) {
                 if (config.headers['Content-Type'] == 'application/json;charset=utf-8') {
                     config.url = baseUrl + config.url;
@@ -21,7 +22,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         };
     });
 
-    $urlRouterProvider.otherwise("/home/login");
+    $urlRouterProvider.otherwise("/home");
     $stateProvider
         .state('home', {
             url: '/home',
@@ -39,8 +40,12 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             controller: 'RegisterStateController',
             controllerAs: 'Register'
         })
+        .state('home.about', {
+            url: '/about',
+            templateUrl: 'partials/about.html'
+        })
         .state('feed', {
-            url: 'feed',
+            url: '/feed',
             templateUrl: 'partials/feed.html'
         });
 });
@@ -99,7 +104,7 @@ function AuthenticationService($http, $q, CurrentUserService) {
             CurrentUserService.setCurrentUser(response.data);
             deferred.resolve(response.data);
         }, function(error) {
-            deferred.reject(error);
+            deferred.reject(error.data);
         });
         return deferred.promise;
     };

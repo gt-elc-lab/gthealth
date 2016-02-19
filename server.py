@@ -9,11 +9,11 @@ CORS(app)
 
 app.register_blueprint(pipeline.tagging.app, url_prefix='/tagging')
 
- def make_user_response(model):
-        return {
-            'id': str(model.id),
-            'email': model.email,
-        }
+def make_user_response(model):
+    return {
+        'id': str(model.id),
+        'email': model.email,
+    }
 
 @app.route('/register', methods=['POST'])
 def register():
