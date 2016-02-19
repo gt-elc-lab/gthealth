@@ -1,4 +1,5 @@
 import nltk
+import config
 
 class Classifier(object):
     """ Interface """
@@ -9,13 +10,9 @@ class Classifier(object):
 class SimpleClassifier(object):
 
     def classify(self, submission):
-        keywords = set(['depressed', 'depression', 'suicide', 'suicidal', 'kill', 'sad', 'unhappy',
-                    'fuck', 'fucking', 'hate', 'counseling', 'counselor', 'psychiatrist',
-                    'hate', 'death', 'die', 'heartbroken', 'lonely', 'hopeless', 'scared',
-                    'suffer', 'failure', 'therapy', 'cry', 'alone', 'loser']);
         tokens = nltk.tokenize.word_tokenize(submission.content)
         for word in tokens:
-            if word in keywords:
+            if word in config.keywords:
                 return True
         return False
 

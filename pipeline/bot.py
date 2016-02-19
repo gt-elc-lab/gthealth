@@ -21,6 +21,13 @@ class RedditBot(object):
 
     def submit(self, subreddit, title, text, url=None):
         self.reddit.submit(subreddit, title, text=text, url=url)
+        
+    def comment(self, submission_id, text): 
+        submission = praw.objects.Submission.from_id(submission_id)
+        comment_on_submission(submission, text)
+
+    def comment_on_submission(self, submission, text)
+        submission.add_comment(text)
 
     def random_name(self, length=10):
         """
