@@ -3,6 +3,8 @@ BOT_CREDENTIALS = {
         'password':'password'
     }
 
+TEST_DB_URI = 'mongodb://elc:yak@ds047652.mongolab.com:47652/redditdump'
+
 SUBREDDITS = [
             {'name': 'McGill University', 'subreddit': 'mcgill'},
             {'name': 'Georgia Tech', 'subreddit': 'gatech'},
@@ -26,8 +28,7 @@ SUBREDDITS = [
             {'name': 'University of Georgia', 'subreddit': 'UGA'}
       ]
 
-keywords = set(['depressed', 'depression', 'suicide', 'suicidal', 'kill', 'sad',
-                    'unhappy', 'fuck', 'fucking', 'hate', 'counseling',
-                    'counselor', 'psychiatrist', 'hate', 'death', 'die',
-                    'heartbroken', 'lonely', 'hopeless', 'scared', 'suffer',
-                    'failure', 'therapy', 'cry', 'alone', 'loser']);
+keywords = set(['depressed', 'depression', 'suicide', 'suicidal', 'kill',
+                    'unhappy', 'counseling', 'counselor', 'psychiatrist',
+                    'hate', 'death', 'die', 'heartbroken', 'lonely', 'hopeless',
+                    'scared', 'suffer','failure', 'therapy', 'cry', 'alone', 'loser']);

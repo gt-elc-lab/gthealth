@@ -2,7 +2,7 @@ from mongoengine import *
 from passlib.apps import custom_app_context as pwd_context
 
 import config
-connect('gthealth')
+connect('gthealth', host=config.TEST_DB_URI)
 
 class Post(Document):
     r_id = StringField(primary_key=True)
@@ -24,5 +24,8 @@ class User(Document):
 
 class Sample(Document):
     r_id = StringField(primary_key=True)
+    title = StringField()
     content = StringField()
-    tag = BooleanField(default=False)
+    label = BooleanField()
+    date = DateTimeField()
+    subreddit = StringField()

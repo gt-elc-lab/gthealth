@@ -2,12 +2,13 @@ import flask
 from flask.ext.cors import CORS
 
 import model
-import pipeline.tagging
+import pipeline.labeling
 
 app = flask.Flask(__name__)
 CORS(app)
 
-app.register_blueprint(pipeline.tagging.app, url_prefix='/tagging')
+app.register_blueprint(pipeline.labeling.app, url_prefix='/label')
+app.secret_key = 'super secret'
 
 def make_user_response(model):
     return {
@@ -21,7 +22,7 @@ def register():
     password = flask.request.json.get('password')
     if email is None or password is None:
         raise AuthenticationError('Missing credentials.')
-    if model.User.objects(email=email).first() is not None:
+    if model.User.objects(email=email).first():
         raise AuthenticationError('User already exists.')
     user = model.User(email=email)
     user.hash_password(password)
@@ -43,7 +44,7 @@ def login():
     return flask.jsonify(make_user_response(user))
 
 
-@app.route('/activate/<string:_id>', methods=['GET'])
+@app.route('/activate/<string:_id>', methods=['POST'])
 def activate(_id):
     return
 

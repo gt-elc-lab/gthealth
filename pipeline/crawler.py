@@ -1,5 +1,6 @@
 from datetime import datetime
 import praw
+
 import config
 import classifier
 import model
@@ -18,7 +19,13 @@ class Crawler(object):
 
     @staticmethod
     def sample_from_praw_submission(submission):
-        return model.Sample(r_id=submission.id, content=submission.selftext)
+        return model.Sample(r_id=submission.id,
+                            title = submission.title,
+                            content=submission.selftext,
+                            date=datetime.utcfromtimestamp(
+                                submission.created_utc),
+                            subreddit=submission.subreddit.display_name)
+
 
     @staticmethod
     def post_from_praw_submission(submission):
@@ -32,15 +39,15 @@ def download_corpus():
     """ Performs a search for depression related posts on all of our subreddits"""
     r = praw.Reddit(user_agent='gthealth')
     for school in config.SUBREDDITS:
-        print 'Searcing posts from %s' % (school['name'])
+        print 'Searching posts from %s' % (school['name'])
         query = ' OR '.join(config.keywords)
-        samples = map(Crawler.sample_from_praw_submission, 
+        samples = map(Crawler.sample_from_praw_submission,
             r.search(query, subreddit=school['subreddit'], limit=1000))
-        print '    found %d results' % (len(samples))
+        print 'found %d results' % (len(samples))
         for sample in samples:
             sample.save()
     return
-        
+
 
 if __name__ == '__main__':
     # Crawler(classifier.SimpleClassifier()).run()

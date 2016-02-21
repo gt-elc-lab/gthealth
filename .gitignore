@@ -1,3 +1,4 @@
 *.pyc
 ui/node_modules/
 ui/public/js/main.js
+.DS_STORE
