@@ -1,14 +1,17 @@
 import flask
 from flask.ext.cors import CORS
+import json
 
 import model
 import pipeline.labeling
 
-app = flask.Flask(__name__)
-CORS(app)
+application = flask.Flask(__name__)
+CORS(application)
+application.secret_key = 'super secret'
 
-app.register_blueprint(pipeline.labeling.app, url_prefix='/label')
-app.secret_key = 'super secret'
+api = flask.Blueprint('api', __name__, template_folder='templates')
+
+""" User routes """
 
 def make_user_response(model):
     return {
@@ -16,7 +19,7 @@ def make_user_response(model):
         'email': model.email,
     }
 
-@app.route('/register', methods=['POST'])
+@api.route('/register', methods=['POST'])
 def register():
     email = flask.request.json.get('email')
     password = flask.request.json.get('password')
@@ -30,7 +33,7 @@ def register():
     return flask.jsonify(make_user_response(user))
 
 
-@app.route('/login', methods=['POST'])
+@api.route('/login', methods=['POST'])
 def login():
     email = flask.request.json.get('email')
     password = flask.request.json.get('password')
@@ -42,12 +45,6 @@ def login():
     if not user.verify_password(password):
         raise AuthenticationError('Incorrect username or password.')
     return flask.jsonify(make_user_response(user))
-
-
-@app.route('/activate/<string:_id>', methods=['POST'])
-def activate(_id):
-    return
-
 
 class AuthenticationError(Exception):
     status_code = 400
@@ -64,13 +61,33 @@ class AuthenticationError(Exception):
         rv['message'] = self.message
         return rv
 
-@app.errorhandler(AuthenticationError)
+@api.errorhandler(AuthenticationError)
 def handle_authentication_error(error):
     response = flask.jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
 
+@api.route('/activate/<string:_id>', methods=['POST'])
+def activate(_id):
+    return
+
+""" Post routes """
+
+@api.route('/post', methods=['GET'])
+def get_posts():
+    posts = model.Post.objects(resolved=False).to_json()
+    print posts
+    return flask.Response(posts,  mimetype='application/json')
+
+@api.route('/post/<string:r_id>', methods=['GET'])
+def get_post(r_id):
+    return model.Post.objects.get(r_id=r_id).to_json()
+
+
+application.register_blueprint(pipeline.labeling.app,
+    url_prefix='/label')
+application.register_blueprint(api, url_prefix='/api')
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    application.debug = True
+    application.run()
