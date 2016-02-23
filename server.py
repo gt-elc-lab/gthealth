@@ -76,7 +76,6 @@ def activate(_id):
 @api.route('/post', methods=['GET'])
 def get_posts():
     posts = model.Post.objects(resolved=False).to_json()
-    print posts
     return flask.Response(posts,  mimetype='application/json')
 
 @api.route('/post/<string:r_id>', methods=['GET'])

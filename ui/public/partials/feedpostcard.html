@@ -1,0 +1,18 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">{{post.title}}</div>
+    <div class="panel-body">
+        {{post.content | limitTo:textLimit}} <button
+            class="btn btn-xs btn-info"
+            ng-show="shouldShowButton"
+            ng-click='show()'> {{textPrompt}}</button>
+    </div>
+    <div class="alert alert-dismissible alert-warning"
+         ng-show="message.visible">
+        {{message.text}}
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-sm btn-danger"
+            ng-click="showMessage()">Discard</button>
+        <button class="btn btn-sm btn-success">Reply</button>
+    </div>
+</div>

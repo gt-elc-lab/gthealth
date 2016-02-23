@@ -2,7 +2,7 @@ from mongoengine import *
 from passlib.apps import custom_app_context as pwd_context
 
 import config
-connect('gthealth', host=config.TEST_DB_URI)
+connect('gthealth')
 
 class Post(Document):
     r_id = StringField(primary_key=True)

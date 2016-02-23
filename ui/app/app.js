@@ -7,6 +7,8 @@ var gthealth = angular.module('gthealth', ['ui.router', 'ngResource']);
 gthealth.service('CurrentUserService', CurrentUserService);
 gthealth.service('AuthenticationService', AuthenticationService);
 gthealth.service('Post', Post);
+
+gthealth.directive('feedPostCard', FeedPostCard);
 gthealth.controller('LoginStateController', LoginStateController);
 gthealth.controller('RegisterStateController', RegisterStateController);
 gthealth.controller('MainStateController', MainStateController);
@@ -16,7 +18,6 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
     $httpProvider.interceptors.push(function() {
         var apiUrl = 'http://localhost:5000';
         return {
-            // All json requests should be directed to the api.
             request: function(config) {
                 if (config.url.startsWith('/api')) {
                     config.url = apiUrl + config.url;
@@ -62,13 +63,56 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
 Post.$inject = ['$resource'];
 function Post($resource) {
-    return $resource('/post/:id', {id: '@id'}, {
+    return $resource('/api/post/:id', {id: '@id'}, {
         query: {
             method: 'GET',
-            url: '/api/post',
             isArray: true
         }
     });
+}
+
+function FeedPostCard() {
+    return {
+        scope: {
+            post: '='
+        },
+        restrict: 'AE',
+        templateUrl: 'partials/feedpostcard.html',
+        controller: function($scope) {
+            var textLimit = 500;
+            var showMoreText = 'show more';
+            var showLessText = 'show less';
+
+            $scope.textLimit = textLimit;
+            $scope.textPrompt = showMoreText;
+            $scope.shouldShowButton = $scope.post.content.length > textLimit;
+
+            $scope.message = {
+                visible: false,
+                text: 'Are you sure you want to discard this message?'
+            };
+
+            $scope.showMessage = function() {
+                $scope.message.visible =  !$scope.message.visible;
+            };
+
+            $scope.show = function() {
+                var fn = $scope.textPrompt == showMoreText ? showMore : showLess;
+                fn();
+            };
+
+            function showMore() {
+                $scope.textLimit = Infinity;
+                $scope.textPrompt = showLessText;
+            }
+
+            function showLess() {
+                $scope.textLimit = textLimit;
+                $scope.textPrompt = showMoreText;
+            }
+
+        }
+    }
 }
 
 LoginStateController.$inject = ['$state', 'AuthenticationService'];

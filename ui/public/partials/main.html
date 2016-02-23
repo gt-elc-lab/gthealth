@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse zero-border-radius">
+<nav class="navbar navbar-inverse zero-border-radius navbar-fixed-top margin-btm-lg">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
@@ -22,7 +22,8 @@
     </div>
 </nav>
 <div class="col-md-12">
-    <div class="col-md-4 col-md-offset-1">
-        <p ng-repeat="post in Main.posts">{{post.content}}</p>
+    <div class="col-md-6 col-md-offset-3 first-child-padding">
+        <feed-post-card ng-repeat="post in Main.posts" post="post">
+        </feed-post-card>
     </div>
 </div>
