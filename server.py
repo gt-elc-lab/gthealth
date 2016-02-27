@@ -29,6 +29,7 @@ def register():
         raise AuthenticationError('User already exists.')
     user = model.User(email=email)
     user.hash_password(password)
+    user.create_activation_token()
     user.save()
     return flask.jsonify(make_user_response(user))
 
@@ -42,9 +43,23 @@ def login():
     user = model.User.objects(email=email).first()
     if not user:
         raise AuthenticationError('User does not exist.')
+    if not user.activated:
+        raise AuthenticationError('Please activate your account.')
     if not user.verify_password(password):
-        raise AuthenticationError('Incorrect username or password.')
+        raise AuthenticationError('Incorrect password.')
     return flask.jsonify(make_user_response(user))
+
+@api.route('/activate/<string:token>', methods=['GET'])
+def activate(token):
+    user = model.User.objects(activation_token=token).first()
+    if not user:
+        flask.abort(400)
+    user.activated = True
+    user.save()
+    return 'Successfully activated your account'
+
+
+
 
 class AuthenticationError(Exception):
     status_code = 400
@@ -67,9 +82,6 @@ def handle_authentication_error(error):
     response.status_code = error.status_code
     return response
 
-@api.route('/activate/<string:_id>', methods=['POST'])
-def activate(_id):
-    return
 
 """ Post routes """
 
@@ -81,6 +93,22 @@ def get_posts():
 @api.route('/post/<string:r_id>', methods=['GET'])
 def get_post(r_id):
     return model.Post.objects.get(r_id=r_id).to_json()
+
+@api.route('/respond/<string:r_id>/<string:user_id>')
+def respond(r_id, user_id):
+    post = model.Post.objects.get(r_id=r_id)
+    post.resolved = True
+    post.save()
+    return  flask.jsonify({'status': 'success'})
+
+@api.route('/post/<string:r_id>', methods=['DELETE'])
+def discard(r_id):
+    post = model.Post.objects.get(r_id=r_id)
+    post.discard = True
+    post.resolved = True
+    post.save()
+    return flask.jsonify({'status': 'success'})
+
 
 
 application.register_blueprint(pipeline.labeling.app,

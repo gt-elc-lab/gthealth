@@ -9,9 +9,11 @@ gthealth.service('AuthenticationService', AuthenticationService);
 gthealth.service('Post', Post);
 
 gthealth.directive('feedPostCard', FeedPostCard);
+
 gthealth.controller('LoginStateController', LoginStateController);
 gthealth.controller('RegisterStateController', RegisterStateController);
 gthealth.controller('MainStateController', MainStateController);
+gthealth.controller('ReplyStateController', RegisterStateController)
 
 
 gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
@@ -55,6 +57,15 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             controller: 'MainStateController',
             controllerAs: 'Main'
         })
+        .state('main.reply', {
+            url: '/reply',
+            templateUrl: 'partials/reply.html',
+            controller: 'ReplyStateController',
+            controllerAs: 'Reply',
+            params: {
+                post: null
+            }
+        })
         .state('main.settings', {
             url: '/settings',
             templateUrl: 'partials/settings.html'
@@ -63,7 +74,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
 Post.$inject = ['$resource'];
 function Post($resource) {
-    return $resource('/api/post/:id', {id: '@id'}, {
+    return $resource('/api/post/:id', {id: '@_id'}, {
         query: {
             method: 'GET',
             isArray: true
@@ -71,6 +82,7 @@ function Post($resource) {
     });
 }
 
+FeedPostCard.$inject = ['$state'];
 function FeedPostCard() {
     return {
         scope: {
@@ -78,7 +90,12 @@ function FeedPostCard() {
         },
         restrict: 'AE',
         templateUrl: 'partials/feedpostcard.html',
-        controller: function($scope) {
+        link: function($scope, $element, $attrs) {
+            $scope.$on('$destroy', function() {
+                $element.remove();
+            });
+        },
+        controller: function($scope, $state) {
             var textLimit = 500;
             var showMoreText = 'show more';
             var showLessText = 'show less';
@@ -99,16 +116,32 @@ function FeedPostCard() {
             $scope.show = function() {
                 var fn = $scope.textPrompt == showMoreText ? showMore : showLess;
                 fn();
+                return;
             };
+
+            $scope.discard = function() {
+                $scope.post.$delete().then(function(response) {
+                    $scope.$destroy();
+                }, function(error) {
+
+                })
+            };
+
+            $scope.reply = function() {
+                $state.go('reply', {post: $scope.post});
+                return;
+            }
 
             function showMore() {
                 $scope.textLimit = Infinity;
                 $scope.textPrompt = showLessText;
+                return;
             }
 
             function showLess() {
                 $scope.textLimit = textLimit;
                 $scope.textPrompt = showMoreText;
+                return;
             }
 
         }
@@ -145,6 +178,11 @@ function RegisterStateController($state, AuthenticationService) {
 MainStateController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
 function MainStateController($state, $http, Post, AuthenticationService, CurrentUserService) {
     this.posts = Post.query();
+}
+
+RegisterStateController.$inject = ['$state', 'CurrentUserService'];
+function ReplyStateController($state, CurrentUserService) {
+    this.post = $state.params.post;
 }
 
 function CurrentUserService() {
