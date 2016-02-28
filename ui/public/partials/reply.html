@@ -1,8 +1,21 @@
-<div class="col-md-4">
+<div class="col-md-4 col-md-offset-1">
     <div class="page-header">
         <h1 class="text-center">{{Reply.post.title}}<small></small></h1>
     </div>
     <div class="row">
         <p> {{Reply.post.content}}</p>
+    </div>
+</div>
+<div class="col-md-4 col-md-offset-1 margin-top-lg">
+    <div class="alert alert-dismissible alert-success"
+        ng-show="Reply.successMessage.visible">
+        {{Reply.successMessage.text}}
+    </div>
+    <div class="list-group">
+        <response-card
+        ng-repeat="response in Reply.responses"
+        response="response"
+        send-response="Reply.sendResponse"
+        > </response-card>
     </div>
 </div>

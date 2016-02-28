@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="thumbnail">
+      <div class="caption">
+        <h3>{{response.title}}</h3>
+        <p>{{response.content}}</p>
+        <div class="alert alert-dismissible alert-info"
+          ng-show="message.visible">
+          {{message.text}}  <button class="btn btn-sm btn-success"
+          ng-click="reply()">Yes</button>
+          <button class="btn btn-sm btn-danger"
+          ng-click="no()">No</button>
+        </div>
+        </div>
+        <button class="btn btn-primary btn-block" role="button" ng-click="use()">Use</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,13 +7,15 @@ var gthealth = angular.module('gthealth', ['ui.router', 'ngResource']);
 gthealth.service('CurrentUserService', CurrentUserService);
 gthealth.service('AuthenticationService', AuthenticationService);
 gthealth.service('Post', Post);
+gthealth.service('ResponseListModel', ResponseListModel);
 
 gthealth.directive('feedPostCard', FeedPostCard);
+gthealth.directive('responseCard', ResponseCard);
 
 gthealth.controller('LoginStateController', LoginStateController);
 gthealth.controller('RegisterStateController', RegisterStateController);
 gthealth.controller('MainStateController', MainStateController);
-gthealth.controller('ReplyStateController', RegisterStateController)
+gthealth.controller('ReplyStateController', ReplyStateController)
 
 
 gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
@@ -58,7 +60,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             controllerAs: 'Main'
         })
         .state('main.reply', {
-            url: '/reply',
+            url: '/reply/:_id',
             templateUrl: 'partials/reply.html',
             controller: 'ReplyStateController',
             controllerAs: 'Reply',
@@ -74,12 +76,46 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
 Post.$inject = ['$resource'];
 function Post($resource) {
-    return $resource('/api/post/:id', {id: '@_id'}, {
+    return $resource('/api/post/:_id', {_id: '@_id'}, {
         query: {
             method: 'GET',
             isArray: true
         }
     });
+}
+
+ResponseCard.$inject = ['$state'];
+function ResponseCard() {
+    return {
+        scope: {
+            response: '=',
+            sendResponse: '&'
+        },
+        restrict: 'AE',
+        templateUrl: 'partials/responsecard.html',
+        link: function($scope, $element, $attrs) {
+
+        },
+        controller: function($scope, $state) {
+            $scope.message = {
+                visble: false,
+                text: 'Reply with this message?'
+            };
+
+            $scope.reply = function() {
+                $scope.sendResponse()($scope.response);
+            };
+
+            $scope.use = function() {
+                $scope.message.visible = true;
+            };
+
+            $scope.no = function() {
+                $scope.message.visible = false;
+            };
+
+        }
+    }
 }
 
 FeedPostCard.$inject = ['$state'];
@@ -128,7 +164,7 @@ function FeedPostCard() {
             };
 
             $scope.reply = function() {
-                $state.go('reply', {post: $scope.post});
+                $state.go('main.reply', {_id: $scope.post._id, post: $scope.post});
                 return;
             }
 
@@ -180,9 +216,25 @@ function MainStateController($state, $http, Post, AuthenticationService, Current
     this.posts = Post.query();
 }
 
-RegisterStateController.$inject = ['$state', 'CurrentUserService'];
-function ReplyStateController($state, CurrentUserService) {
-    this.post = $state.params.post;
+RegisterStateController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
+function ReplyStateController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
+    var currentUser = CurrentUserService.getCurrentUser();
+    this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
+    this.responses = ResponseListModel;
+
+    this.successMessage = {
+        visible: false,
+        text: "Reply sent!"
+    };
+
+    this.sendResponse = respond.bind(this);
+
+    function respond(message) {
+        this.successMessage.visible = true;
+        $timeout(function() {
+            $state.go('main');
+        }, 1500);
+    }
 }
 
 function CurrentUserService() {
@@ -227,4 +279,17 @@ function AuthenticationService($http, $q, CurrentUserService) {
         });
         return deferred.promise;
     };
+}
+
+function ResponseListModel() {
+    // TODO(simplyfaisal): Create content
+    var responses = [{
+            title: 'Informational Response',
+            content: 'This will be a response that provides a link to the counseling service website',
+        }, {
+            title: 'Provide Resources Response',
+            content: 'This will be a response providing detailed information about all of the avaible resources and how access them',
+        }];
+
+    return responses;
 }
