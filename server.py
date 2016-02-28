@@ -4,6 +4,7 @@ import json
 
 import model
 import pipeline.labeling
+import bot
 
 application = flask.Flask(__name__)
 CORS(application)
@@ -49,6 +50,7 @@ def login():
         raise AuthenticationError('Incorrect password.')
     return flask.jsonify(make_user_response(user))
 
+
 @api.route('/activate/<string:token>', methods=['GET'])
 def activate(token):
     user = model.User.objects(activation_token=token).first()
@@ -57,8 +59,6 @@ def activate(token):
     user.activated = True
     user.save()
     return 'Successfully activated your account'
-
-
 
 
 class AuthenticationError(Exception):
@@ -90,16 +90,22 @@ def get_posts():
     posts = model.Post.objects(resolved=False).to_json()
     return flask.Response(posts,  mimetype='application/json')
 
+
 @api.route('/post/<string:r_id>', methods=['GET'])
 def get_post(r_id):
     return model.Post.objects.get(r_id=r_id).to_json()
 
+
 @api.route('/respond/<string:r_id>/<string:user_id>')
 def respond(r_id, user_id):
     post = model.Post.objects.get(r_id=r_id)
+    message = flask.request.args.get('message')
+    reddit_bot = bot.RedditBot()
+    reddit_bot.comment(r_id, message)
     post.resolved = True
     post.save()
     return  flask.jsonify({'status': 'success'})
+
 
 @api.route('/post/<string:r_id>', methods=['DELETE'])
 def discard(r_id):
@@ -108,7 +114,6 @@ def discard(r_id):
     post.resolved = True
     post.save()
     return flask.jsonify({'status': 'success'})
-
 
 
 application.register_blueprint(pipeline.labeling.app,
