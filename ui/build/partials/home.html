@@ -1,4 +1,5 @@
-<nav class="navbar navbar-inverse zero-border-radius navbar-fixed-top margin-btm-lg">
+<!-- Navbar -->
+<nav class="navbar navbar-inverse zero-border-radius">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
@@ -13,17 +14,24 @@
             <ul class="nav navbar-nav">
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a>Logout</a></li>
+                <li ui-sref-active="active"><a ui-sref="home.login">Login</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li ui-sref-active="active"><a ui-sref="home.about">Settings</a></li>
+                <li ui-sref-active="active"><a ui-sref="home.about">About</a></li>
             </ul>
         </div>
     </div>
 </nav>
-<div class="col-md-12 first-child-padding" ui-view>
-    <div class="col-md-6 col-md-offset-3 first-child-padding">
-        <feed-post-card ng-repeat="post in Main.posts" post="post">
-        </feed-post-card>
+<!-- End Navbar -->
+<div ui-view>
+    <div class="jumbotron">
+        <h1>GT Health</h1>
+        <p>Proactive assistance for students seeking mental health counseling resources on social media.</p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="home.about">Learn more</a></p>
+    </div>
+    <div class="row">
+        <div class="page-header">
+            <h1 class="text-center text-center">How it works<small></small></h1>
+        </div>
     </div>
 </div>
