@@ -1,43 +1,46 @@
-<div class="col-md-3 col-md-offset-4">
+<div class="col-md-4 col-md-offset-4">
   <div class="page-header">
     <h1 class="text-center">register<small></small></h1>
   </div>
   <div class="row margin-top-md">
-    <div class="alert alert-danger alert-dismissible"
-         role="alert"
-         ng-show="Register.error">
-      {{Register.error.message}}
-    </div>
+    <form ng-submit="Register.register()">
+      <div class="alert alert-danger alert-dismissible"
+        role="alert"
+        ng-show="Register.error">
+        {{Register.error.message}}
+      </div>
 
-    <!-- email -->
-    <div class="form-group">
-      <input class="form-control"
-      id="focusedInput"
-      type="text"
-      placeholder="email"
-      ng-model="Register.email"
-      >
+      <div class="form-group">
+
+
+        <input class="form-control margin-top-sm"
+          id="focusedInput"
+          type="text"
+          placeholder="email"
+          ng-model="Register.email"
+          required/>
+
+        <input class="form-control margin-top-sm"
+          id="focusedInput"
+          type="password"
+          placeholder="password"
+          ng-model="Register.password"
+          required>
+
+        <input class="form-control margin-top-sm"
+          id="focusedInput"
+          type="password"
+          placeholder="confirm password"
+          ng-model="Register.confirmationPassword"
+          required/>
+
+
+      </div>
+      <input class="btn btn-primary btn-lg btn-block"
+          type="submit"
+          value="Register"
+          required/>
+      <p class="text-center margin-top-sm">Already have an account ? <a ui-sref="home.login" class="text-info">Login.</a></p>
     </div>
-    <!-- password -->
-    <div class="form-group">
-      <input class="form-control"
-      id="focusedInput"
-      type="password"
-      placeholder="password"
-      ng-model="Register.password"
-      >
-    </div>
-    <!-- password -->
-    <div class="form-group">
-      <input class="form-control"
-      id="focusedInput"
-      type="password"
-      placeholder="confirm password"
-      ng-model="Register.confirmationPassword"
-      >
-    </div>
-    <button class="btn btn-primary btn-lg btn-block"
-    ng-click="Register.register()">Register</button>
-    <p class="text-center">Already have an account ? <a ui-sref="gthealth.login" class="text-info">Login.</a></p>
-  </div>
+  </form>
 </div>

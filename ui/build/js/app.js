@@ -3,20 +3,25 @@ require('angular');
 require('angular-ui-router');
 require('angular-resource');
 
+var controllers = require('./controllers');
+var directives = require('./directives');
+var services = require('./services');
+var utils = require('./utils');
+
 
 var gthealth = angular.module('gthealth', ['ui.router', 'ngResource'])
-    .service('CurrentUserService', CurrentUserService)
-    .service('AuthenticationService', AuthenticationService)
-    .service('Post', Post)
-    .service('ResponseListModel', ResponseListModel)
+    .service('CurrentUserService', services.CurrentUserService)
+    .service('AuthenticationService', services.AuthenticationService)
+    .service('Post', utils.Post)
+    .service('ResponseListModel', utils.ResponseListModel)
 
-    .directive('feedPostCard', FeedPostCard)
-    .directive('responseCard', ResponseCard)
+    .directive('feedPostCard', directives.FeedPostCard)
+    .directive('responseCard', directives.ResponseCard)
 
-    .controller('LoginStateController', LoginStateController)
-    .controller('RegisterStateController', RegisterStateController)
-    .controller('MainStateController', MainStateController)
-    .controller('ReplyStateController', ReplyStateController);
+    .controller('LoginStateController', controllers.LoginStateController)
+    .controller('RegisterStateController', controllers.RegisterStateController)
+    .controller('MainStateController', controllers.MainStateController)
+    .controller('ReplyStateController', controllers.ReplyStateController);
 
 
 gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
@@ -75,15 +80,68 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         });
 });
 
-Post.$inject = ['$resource'];
-function Post($resource) {
-    return $resource('/api/post/:_id', {_id: '@_id'}, {
-        query: {
-            method: 'GET',
-            isArray: true
-        }
-    });
+
+},{"./controllers":2,"./directives":3,"./services":4,"./utils":5,"angular":10,"angular-resource":7,"angular-ui-router":8}],2:[function(require,module,exports){
+exports.LoginStateController = LoginStateController;
+exports.RegisterStateController = RegisterStateController;
+exports.MainStateController = MainStateController;
+exports.RegisterStateController = RegisterStateController;
+
+LoginStateController.$inject = ['$state', 'AuthenticationService'];
+function LoginStateController($state, AuthenticationService) {
+    this.error = null;
+    this.login = function() {
+        this.error = null;
+        AuthenticationService.login(this.email, this.password).then(function(response) {
+            $state.go('main');
+        }.bind(this), function(error) {
+            this.error = error;
+        }.bind(this));
+    };
 }
+
+RegisterStateController.$inject = ['$state', 'AuthenticationService'];
+function RegisterStateController($state, AuthenticationService) {
+    this.error = null;
+    this.register = function() {
+        this.error = null;
+        AuthenticationService.register(this.email, this.password)
+            .then(function(response) {
+            $state.go('main');
+        }.bind(this), function(error) {
+            this.error = error;
+        }.bind(this));
+    };
+}
+
+MainStateController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
+function MainStateController($state, $http, Post, AuthenticationService, CurrentUserService) {
+    this.posts = Post.query();
+}
+
+ReplyStateController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
+function ReplyStateController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
+    var currentUser = CurrentUserService.getCurrentUser();
+    this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
+    this.responses = ResponseListModel;
+
+    this.successMessage = {
+        visible: false,
+        text: "Reply sent!"
+    };
+
+    this.sendResponse = respond.bind(this);
+
+    function respond(message) {
+        this.successMessage.visible = true;
+        $timeout(function() {
+            $state.go('main');
+        }, 1500);
+    }
+}
+},{}],3:[function(require,module,exports){
+exports.ResponseCard = ResponseCard;
+exports.FeedPostCard = FeedPostCard;
 
 ResponseCard.$inject = ['$state'];
 function ResponseCard() {
@@ -184,59 +242,9 @@ function FeedPostCard() {
         }
     }
 }
-
-LoginStateController.$inject = ['$state', 'AuthenticationService'];
-function LoginStateController($state, AuthenticationService) {
-    this.error = null;
-    this.login = function() {
-        this.error = null;
-        AuthenticationService.login(this.email, this.password).then(function(response) {
-            $state.go('main');
-        }.bind(this), function(error) {
-            this.error = error;
-        }.bind(this));
-    };
-}
-
-RegisterStateController.$inject = ['$state', 'AuthenticationService'];
-function RegisterStateController($state, AuthenticationService) {
-    this.error = null;
-    this.register = function() {
-        this.error = null;
-        AuthenticationService.register(this.email, this.password)
-            .then(function(response) {
-            $state.go('main');
-        }.bind(this), function(error) {
-            this.error = error;
-        }.bind(this));
-    };
-}
-
-MainStateController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
-function MainStateController($state, $http, Post, AuthenticationService, CurrentUserService) {
-    this.posts = Post.query();
-}
-
-RegisterStateController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
-function ReplyStateController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
-    var currentUser = CurrentUserService.getCurrentUser();
-    this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
-    this.responses = ResponseListModel;
-
-    this.successMessage = {
-        visible: false,
-        text: "Reply sent!"
-    };
-
-    this.sendResponse = respond.bind(this);
-
-    function respond(message) {
-        this.successMessage.visible = true;
-        $timeout(function() {
-            $state.go('main');
-        }, 1500);
-    }
-}
+},{}],4:[function(require,module,exports){
+exports.CurrentUserService = CurrentUserService;
+exports.AuthenticationService = AuthenticationService;
 
 function CurrentUserService() {
     var currentUser = null;
@@ -282,6 +290,21 @@ function AuthenticationService($http, $q, CurrentUserService) {
     };
 }
 
+},{}],5:[function(require,module,exports){
+exports.Post = Post;
+exports.ResponseListModel = ResponseListModel;
+
+Post.$inject = ['$resource'];
+function Post($resource) {
+    return $resource('/api/post/:_id', {_id: '@_id'}, {
+        query: {
+            method: 'GET',
+            isArray: true
+        }
+    });
+}
+
+
 function ResponseListModel() {
     // TODO(simplyfaisal): Create content
     var responses = [{
@@ -294,7 +317,7 @@ function ResponseListModel() {
 
     return responses;
 }
-},{"angular":6,"angular-resource":3,"angular-ui-router":4}],2:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.0
  * (c) 2010-2016 Google, Inc. http://angularjs.org
@@ -1064,11 +1087,11 @@ angular.module('ngResource', ['ng']).
 
 })(window, window.angular);
 
-},{}],3:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 require('./angular-resource');
 module.exports = 'ngResource';
 
-},{"./angular-resource":2}],4:[function(require,module,exports){
+},{"./angular-resource":6}],8:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.18
@@ -5608,7 +5631,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.0
  * (c) 2010-2016 Google, Inc. http://angularjs.org
@@ -36037,8 +36060,8 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":5}]},{},[1]);
+},{"./angular":9}]},{},[1]);

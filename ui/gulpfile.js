@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var connect = require('gulp-connect');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var shell = require('gulp-shell');
 
 gulp.task('connect', function () {
     connect.server({
@@ -14,6 +15,9 @@ gulp.task('watch', function() {
     gulp.watch('app/**/*.js', ['browserify']);
 });
 
+// run the flask server
+gulp.task('flask', shell.task(['python ../server/server.py']));
+
 gulp.task('browserify', function() {
     // Grabs the app.js file
     return browserify('./app/app.js')
@@ -24,4 +28,4 @@ gulp.task('browserify', function() {
         .pipe(gulp.dest('./build/js/'));
 });
 
-gulp.task('default', ['connect', 'watch']);
+gulp.task('default', ['connect', 'watch', 'flask']);
