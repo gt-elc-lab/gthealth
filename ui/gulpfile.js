@@ -28,4 +28,4 @@ gulp.task('browserify', function() {
         .pipe(gulp.dest('./build/js/'));
 });
 
-gulp.task('default', ['connect', 'watch', 'flask']);
+gulp.task('default', ['connect', 'watch']);

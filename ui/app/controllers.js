@@ -1,42 +1,15 @@
-exports.LoginStateController = LoginStateController;
-exports.RegisterStateController = RegisterStateController;
-exports.MainStateController = MainStateController;
-exports.RegisterStateController = RegisterStateController;
 
-LoginStateController.$inject = ['$state', 'AuthenticationService'];
-function LoginStateController($state, AuthenticationService) {
-    this.error = null;
-    this.login = function() {
-        this.error = null;
-        AuthenticationService.login(this.email, this.password).then(function(response) {
-            $state.go('main');
-        }.bind(this), function(error) {
-            this.error = error;
-        }.bind(this));
-    };
-}
+exports.FeedViewController = FeedViewController;
+exports.ReplyViewController = ReplyViewController;
 
-RegisterStateController.$inject = ['$state', 'AuthenticationService'];
-function RegisterStateController($state, AuthenticationService) {
-    this.error = null;
-    this.register = function() {
-        this.error = null;
-        AuthenticationService.register(this.email, this.password)
-            .then(function(response) {
-            $state.go('main');
-        }.bind(this), function(error) {
-            this.error = error;
-        }.bind(this));
-    };
-}
 
-MainStateController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
-function MainStateController($state, $http, Post, AuthenticationService, CurrentUserService) {
+FeedViewController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
+function FeedViewController($state, $http, Post, AuthenticationService, CurrentUserService) {
     this.posts = Post.query();
 }
 
-ReplyStateController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
-function ReplyStateController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
+ReplyViewController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
+function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
     var currentUser = CurrentUserService.getCurrentUser();
     this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
     this.responses = ResponseListModel;

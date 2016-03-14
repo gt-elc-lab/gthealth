@@ -1,21 +1,21 @@
 <div class="col-md-4 col-md-offset-1">
     <div class="page-header">
-        <h1 class="text-center">{{Reply.post.title}}<small></small></h1>
+        <h1 class="text-center">{{ReplyView.post.title}}<small></small></h1>
     </div>
     <div class="row">
-        <p> {{Reply.post.content}}</p>
+        <p> {{ReplyView.post.content}}</p>
     </div>
 </div>
 <div class="col-md-4 col-md-offset-1 margin-top-lg">
     <div class="alert alert-dismissible alert-success"
-        ng-show="Reply.successMessage.visible">
-        {{Reply.successMessage.text}}
+        ng-show="ReplyView.successMessage.visible">
+        {{ReplyView.successMessage.text}}
     </div>
     <div class="list-group">
         <response-card
-        ng-repeat="response in Reply.responses"
+        ng-repeat="response in ReplyView.responses"
         response="response"
-        send-response="Reply.sendResponse"
+        send-response="ReplyView.sendResponse"
         > </response-card>
     </div>
 </div>

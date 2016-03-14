@@ -7,7 +7,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" ui-sref="gthealth">gt health</a>
+            <a class="navbar-brand" ui-sref="home">gt health</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
             <ul class="nav navbar-nav">
@@ -21,9 +21,6 @@
         </div>
     </div>
 </nav>
-<div class="col-md-12 first-child-padding" ui-view>
-    <div class="col-md-6 col-md-offset-3 first-child-padding">
-        <feed-post-card ng-repeat="post in Main.posts" post="post">
-        </feed-post-card>
-    </div>
+<div ui-view>
+
 </div>

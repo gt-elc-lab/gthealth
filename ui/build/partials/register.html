@@ -3,38 +3,47 @@
     <h1 class="text-center">register<small></small></h1>
   </div>
   <div class="row margin-top-md">
-    <form ng-submit="Register.register()">
-      <div class="alert alert-danger alert-dismissible"
-        role="alert"
-        ng-show="Register.error">
-        {{Register.error.message}}
+    <form ng-controller="RegisterFormController as Register"
+          name="Register.Form"
+          ng-submit="Register.register()">
+
+       <!-- Error Messages -->
+      <div ng-messages="Register.Form.$error">
+        <div class="alert alert-danger alert-dismissible"
+          role="alert"
+          ng-message="authentication"
+          >
+          {{Register.Form.message}}
+        </div>
       </div>
 
+       <!-- email -->
       <div class="form-group">
-
-
         <input class="form-control margin-top-sm"
-          id="focusedInput"
-          type="text"
-          placeholder="email"
-          ng-model="Register.email"
-          required/>
+        id="focusedInput"
+        type="text"
+        placeholder="email"
+        name="Email"
+        ng-model="Register.Form.email"
+        required/>
 
+        <!-- password -->
         <input class="form-control margin-top-sm"
-          id="focusedInput"
-          type="password"
-          placeholder="password"
-          ng-model="Register.password"
-          required>
+        id="focusedInput"
+        type="password"
+        placeholder="password"
+        name="Password"
+        ng-model="Register.Form.password"
+        required/>
 
+        <!-- password confirmation -->
         <input class="form-control margin-top-sm"
-          id="focusedInput"
-          type="password"
-          placeholder="confirm password"
-          ng-model="Register.confirmationPassword"
-          required/>
-
-
+        id="focusedInput"
+        type="password"
+        placeholder="password"
+        name="ConfirmationPassword"
+        ng-model="Register.Form.confirmationPassword"
+        required/>
       </div>
       <input class="btn btn-primary btn-lg btn-block"
           type="submit"

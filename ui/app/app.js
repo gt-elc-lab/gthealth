@@ -1,6 +1,8 @@
 require('angular');
-require('angular-ui-router');
-require('angular-resource');
+
+
+
+
 
 var controllers = require('./controllers');
 var directives = require('./directives');
@@ -8,7 +10,15 @@ var services = require('./services');
 var utils = require('./utils');
 
 
-var gthealth = angular.module('gthealth', ['ui.router', 'ngResource'])
+var gthealth = angular.module('gthealth', [
+        require('angular-ui-router'),
+        require('angular-resource'),
+        require('angular-animate'),
+        require('angular-messages')
+
+    ]);
+
+gthealth
     .service('CurrentUserService', services.CurrentUserService)
     .service('AuthenticationService', services.AuthenticationService)
     .service('Post', utils.Post)
@@ -17,11 +27,11 @@ var gthealth = angular.module('gthealth', ['ui.router', 'ngResource'])
     .directive('feedPostCard', directives.FeedPostCard)
     .directive('responseCard', directives.ResponseCard)
 
-    .controller('LoginStateController', controllers.LoginStateController)
-    .controller('RegisterStateController', controllers.RegisterStateController)
-    .controller('MainStateController', controllers.MainStateController)
-    .controller('ReplyStateController', controllers.ReplyStateController);
+    .controller('FeedViewController', controllers.FeedViewController)
+    .controller('ReplyViewController', controllers.ReplyViewController);
 
+require('./login');
+require('./register');
 
 gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
     $httpProvider.interceptors.push(function() {
@@ -45,14 +55,14 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         .state('home.login', {
              url: '/login',
             templateUrl: 'partials/login.html',
-            controller: 'LoginStateController',
-            controllerAs: 'Login'
+            controller: 'LoginViewController',
+            controllerAs: 'LoginView'
         })
         .state('home.register', {
             url: '/register',
             templateUrl: 'partials/register.html',
-            controller: 'RegisterStateController',
-            controllerAs: 'Register'
+            controller: 'RegisterViewController',
+            controllerAs: 'RegisterView'
         })
         .state('home.about', {
             url: '/about',
@@ -61,14 +71,18 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         .state('main', {
             url: '/main',
             templateUrl: 'partials/main.html',
-            controller: 'MainStateController',
-            controllerAs: 'Main'
+        })
+        .state('main.feed', {
+            url: '/feed',
+            templateUrl: 'partials/feed.html',
+            controller: 'FeedViewController',
+            controllerAs: 'FeedView'
         })
         .state('main.reply', {
             url: '/reply/:_id',
             templateUrl: 'partials/reply.html',
-            controller: 'ReplyStateController',
-            controllerAs: 'Reply',
+            controller: 'ReplyViewController',
+            controllerAs: 'ReplyView',
             params: {
                 post: null
             }
