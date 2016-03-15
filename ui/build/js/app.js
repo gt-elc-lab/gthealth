@@ -1,5 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('angular');
+// require('jquery');
+// require('bootstrap');
 
 
 
@@ -27,6 +29,7 @@ gthealth
 
     .directive('feedPostCard', directives.FeedPostCard)
     .directive('responseCard', directives.ResponseCard)
+    .directive('loadingIndicator', directives.DataLoadingIndicator)
 
     .controller('FeedViewController', controllers.FeedViewController)
     .controller('ReplyViewController', controllers.ReplyViewController);
@@ -68,6 +71,12 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         .state('home.about', {
             url: '/about',
             templateUrl: 'partials/about.html'
+        })
+        .state('home.confirmation', {
+            url: '/confirmation/:email?token',
+            templateUrl: 'partials/confirmation.html',
+            controller: 'ConfirmationViewController',
+            controllerAs: 'ConfirmationView',
         })
         .state('main', {
             url: '/main',
@@ -129,6 +138,7 @@ function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentU
 },{}],3:[function(require,module,exports){
 exports.ResponseCard = ResponseCard;
 exports.FeedPostCard = FeedPostCard;
+exports.DataLoadingIndicator = DataLoadingIndicator;
 
 ResponseCard.$inject = ['$state'];
 function ResponseCard() {
@@ -163,6 +173,7 @@ function ResponseCard() {
         }
     }
 }
+
 
 FeedPostCard.$inject = ['$state'];
 function FeedPostCard() {
@@ -229,6 +240,32 @@ function FeedPostCard() {
         }
     }
 }
+
+DataLoadingIndicator.$inject = ['$http']
+function DataLoadingIndicator($http) {
+    return  {
+        restrict: 'AE',
+        templateUrl: 'partials/data-loading-indicator.html',
+
+        link: function($scope, $element, $attrs) {
+            $scope.isLoading = isLoading;
+            $scope.$watch($scope.isLoading, toggleElement);
+
+
+            function toggleElement(loading) {
+                if (loading) {
+                    $element.show();
+              } else {
+                    $element.hide();
+              }
+            }
+
+            function isLoading() {
+              return $http.pendingRequests.length > 0;
+            }
+        }
+    }
+}
 },{}],4:[function(require,module,exports){
 var gthealth = require('angular').module('gthealth');
 var login = require('./login');
@@ -268,27 +305,53 @@ var register = require('./register');
 
 gthealth
     .controller('RegisterViewController', register.RegisterViewController)
-    .controller('RegisterFormController', register.RegisterFormController);
+    .controller('RegisterFormController', register.RegisterFormController)
+    .controller('ConfirmationViewController', register.ConfirmationView);
 },{"./register":7,"angular":18}],7:[function(require,module,exports){
 exports.RegisterViewController = RegisterViewController;
 exports.RegisterFormController = RegisterFormController;
+exports.ConfirmationView = ConfirmationViewController;
 
 RegisterViewController.$inject = ['$state', 'AuthenticationService'];
 function RegisterViewController($state, AuthenticationService) {
 
 }
 
+ConfirmationViewController.$inject = ['$state', '$http', '$timeout'];
+function ConfirmationViewController($state, $http, $timeout) {
+    var email = $state.params.email;
+    var token = $state.params.token;
+
+    init.call(this);
+
+    function init() {
+        if (!email) {
+            // show error message
+            return
+        }
+        $http.post('/api/activate/' + email, {token: token}).then(
+            function(response) {
+            //show success message
+            $timeout(function() {
+                $state.go('home.login');
+            }, 3000);
+
+        }, function(response) {
+
+        });
+    }
+}
+
 RegisterFormController.$inject = ['$state', 'AuthenticationService'];
 function RegisterFormController($state, AuthenticationService) {
-
     this.register = function() {
         if (this.Form.$valid) {
             AuthenticationService.register(this.Form.email, this.Form.password)
                 .then(function(response) {
-                $state.go('main');
+                this.Form.$success = {authentication: true};
             }.bind(this), function(error) {
                 this.Form.$error.authentication = true;
-                this.Form.message = error.message;
+                this.Form.errorMessage = error.message;
             }.bind(this));
         }
     };

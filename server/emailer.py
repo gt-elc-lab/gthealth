@@ -1,6 +1,6 @@
 import smtplib
 
-from gthealth import config
+import config
 
 class Emailer(object):
     def __init__(self, credentials=None):

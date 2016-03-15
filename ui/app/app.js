@@ -1,4 +1,6 @@
 require('angular');
+// require('jquery');
+// require('bootstrap');
 
 
 
@@ -26,6 +28,7 @@ gthealth
 
     .directive('feedPostCard', directives.FeedPostCard)
     .directive('responseCard', directives.ResponseCard)
+    .directive('loadingIndicator', directives.DataLoadingIndicator)
 
     .controller('FeedViewController', controllers.FeedViewController)
     .controller('ReplyViewController', controllers.ReplyViewController);
@@ -67,6 +70,12 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         .state('home.about', {
             url: '/about',
             templateUrl: 'partials/about.html'
+        })
+        .state('home.confirmation', {
+            url: '/confirmation/:email?token',
+            templateUrl: 'partials/confirmation.html',
+            controller: 'ConfirmationViewController',
+            controllerAs: 'ConfirmationView',
         })
         .state('main', {
             url: '/main',

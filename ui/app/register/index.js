@@ -4,4 +4,5 @@ var register = require('./register');
 
 gthealth
     .controller('RegisterViewController', register.RegisterViewController)
-    .controller('RegisterFormController', register.RegisterFormController);
+    .controller('RegisterFormController', register.RegisterFormController)
+    .controller('ConfirmationViewController', register.ConfirmationView);

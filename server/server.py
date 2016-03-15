@@ -3,6 +3,7 @@ from flask.ext.cors import CORS
 import json
 
 import model
+import emailer
 from pipeline.labeling import label_server
 import pipeline.bot
 
@@ -31,6 +32,10 @@ def register():
     user.hash_password(password)
     user.create_activation_token()
     user.save()
+    # mail = emailer.Emailer()
+    # message = 'localhost:5000/api/activate/{token}'.format(
+    #     token=user.activation_token)
+    # mail.send_text(user.email, [user.email], message)
     return flask.jsonify(make_user_response(user))
 
 
@@ -50,14 +55,15 @@ def login():
     return flask.jsonify(make_user_response(user))
 
 
-@api.route('/activate/<string:token>', methods=['GET'])
-def activate(token):
-    user = model.User.objects(activation_token=token).first()
+@api.route('/activate/<string:email>', methods=['POST'])
+def activate(email):
+    token = flask.request.json.get('token')
+    user = model.User.objects(email=email, activation_token=token).first()
     if not user:
         flask.abort(400)
     user.activated = True
     user.save()
-    return 'Successfully activated your account'
+    return flask.jsonify(make_user_response(user))
 
 
 class AuthenticationError(Exception):

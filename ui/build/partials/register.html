@@ -13,7 +13,17 @@
           role="alert"
           ng-message="authentication"
           >
-          {{Register.Form.message}}
+          {{Register.Form.errorMessage}}
+        </div>
+      </div>
+
+             <!-- Success Message -->
+      <div ng-messages="Register.Form.$success">
+        <div class="alert alert-dismissible alert-success"
+          role="alert"
+          ng-message="authentication"
+          >
+          We sent an activation email to <strong>{{Register.Form.email}}</strong>. Click on the included link to confirm your email and gain access to the application.
         </div>
       </div>
 

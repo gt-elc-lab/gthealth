@@ -1,5 +1,6 @@
 exports.ResponseCard = ResponseCard;
 exports.FeedPostCard = FeedPostCard;
+exports.DataLoadingIndicator = DataLoadingIndicator;
 
 ResponseCard.$inject = ['$state'];
 function ResponseCard() {
@@ -34,6 +35,7 @@ function ResponseCard() {
         }
     }
 }
+
 
 FeedPostCard.$inject = ['$state'];
 function FeedPostCard() {
@@ -97,6 +99,32 @@ function FeedPostCard() {
                 return;
             }
 
+        }
+    }
+}
+
+DataLoadingIndicator.$inject = ['$http']
+function DataLoadingIndicator($http) {
+    return  {
+        restrict: 'AE',
+        templateUrl: 'partials/data-loading-indicator.html',
+
+        link: function($scope, $element, $attrs) {
+            $scope.isLoading = isLoading;
+            $scope.$watch($scope.isLoading, toggleElement);
+
+
+            function toggleElement(loading) {
+                if (loading) {
+                    $element.show();
+              } else {
+                    $element.hide();
+              }
+            }
+
+            function isLoading() {
+              return $http.pendingRequests.length > 0;
+            }
         }
     }
 }
