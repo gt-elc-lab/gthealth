@@ -12,7 +12,8 @@ MAIL_SETTINGS = {
         'password': 'GeorgeP@1927'
     }
 
-TEST_DB_URI = 'mongodb://elc:yak@ds047652.mongolab.com:47652/redditdump'
+TEST_DB_URI = 'mongodb://test:gthealthtest@ds015919.mlab.com:15919/gthealth_test'
+ACTIVATION_LINK = 'localhost:4000/#/home/confirmation/{_id}/{token}'
 
 SUBREDDITS = [
             {'name': 'McGill University', 'subreddit': 'mcgill'},

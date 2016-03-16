@@ -1,7 +1,7 @@
 from datetime import datetime
 import praw
 
-from gthealth import config
+import config
 import classifier
 import model
 

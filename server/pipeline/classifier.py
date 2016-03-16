@@ -1,7 +1,7 @@
 import nltk
 
-from gthealth import config
-from gthealth import model
+import config
+import model
 
 class Classifier(object):
     """ Interface """

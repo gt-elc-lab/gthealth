@@ -53,3 +53,7 @@
 .panel-heading {
     border-radius: 0px;
 }
+
+.show-pointer {
+    cursor: pointer;
+}

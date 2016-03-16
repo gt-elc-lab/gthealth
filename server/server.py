@@ -3,6 +3,7 @@ from flask.ext.cors import CORS
 import bson
 import json
 
+import config
 import model
 import emailer
 from pipeline.labeling import label_server
@@ -34,8 +35,7 @@ def register():
     user.create_activation_token()
     user.save()
     mail = emailer.Emailer()
-    message = 'localhost:4000/#/home/confirmation/{_id}?{token}'.format(
-        _id=str(user.id), token=user.activation_token)
+    message = config.ACTIVATION_LINK.format(_id=str(user.id), token=user.activation_token)
     mail.send_text(user.email, [user.email], message)
     return flask.jsonify(make_user_response(user))
 

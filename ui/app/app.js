@@ -73,7 +73,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/about.html'
         })
         .state('home.confirmation', {
-            url: '/confirmation/:id?token',
+            url: '/confirmation/:id/:token',
             templateUrl: 'partials/confirmation.html',
             controller: 'ConfirmationViewController',
             controllerAs: 'ConfirmationView',
