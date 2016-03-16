@@ -1,3 +1,5 @@
+import os
+
 BOT_CREDENTIALS = {
         'username':'gthealth',
         'password':'password'
@@ -39,3 +41,12 @@ keywords = set(['depressed', 'depression', 'suicide', 'suicidal', 'kill',
                     'unhappy', 'counseling', 'counselor', 'psychiatrist',
                     'hate', 'death', 'die', 'heartbroken', 'lonely', 'hopeless',
                     'scared', 'suffer','failure', 'therapy', 'cry', 'alone', 'loser']);
+
+class ConfigurationManager(object):
+
+    def __init__(self):
+        return
+
+    @property
+    def uri(self):
+        return os.environ.get('URI') or TEST_DB_URI

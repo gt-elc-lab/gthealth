@@ -1,6 +1,7 @@
 
 exports.FeedViewController = FeedViewController;
 exports.ReplyViewController = ReplyViewController;
+exports.MainViewController = MainViewController;
 
 
 FeedViewController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
@@ -8,8 +9,17 @@ function FeedViewController($state, $http, Post, AuthenticationService, CurrentU
     this.posts = Post.query();
 }
 
-ReplyViewController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
-function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
+MainViewController.$inject = ['$state', 'AuthenticationService'];
+function MainViewController($state, AuthenticationService) {
+
+    this.logout = function() {
+        AuthenticationService.logout();
+        $state.go('home');
+    };
+}
+
+ReplyViewController.$inject = ['$state', '$http','$timeout', 'Post', 'ResponseListModel', 'CurrentUserService'];
+function ReplyViewController($state, $http, $timeout, Post, ResponseListModel, CurrentUserService) {
     var currentUser = CurrentUserService.getCurrentUser();
     this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
     this.responses = ResponseListModel;
@@ -23,8 +33,11 @@ function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentU
 
     function respond(message) {
         this.successMessage.visible = true;
-        $timeout(function() {
-            $state.go('main');
-        }, 1500);
+        $http.post('/api/respond/' + this.post._id, {message: message.content})
+            .then(function(response) {
+                $timeout(function() {
+                    $state.go('main.feed');
+                }, 2000);
+            })
     }
 }

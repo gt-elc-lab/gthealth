@@ -13,7 +13,9 @@
             <ul class="nav navbar-nav">
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a>Logout</a></li>
+                <li ng-controller="MainViewController as MainView">
+                    <a ng-click="MainView.logout()">Logout</a>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li ui-sref-active="active"><a ui-sref="gthealth.about">Settings</a></li>

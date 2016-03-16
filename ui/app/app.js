@@ -30,6 +30,7 @@ gthealth
     .directive('responseCard', directives.ResponseCard)
     .directive('loadingIndicator', directives.DataLoadingIndicator)
 
+    .controller('MainViewController', controllers.MainViewController)
     .controller('FeedViewController', controllers.FeedViewController)
     .controller('ReplyViewController', controllers.ReplyViewController);
 
@@ -72,7 +73,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/about.html'
         })
         .state('home.confirmation', {
-            url: '/confirmation/:email?token',
+            url: '/confirmation/:id?token',
             templateUrl: 'partials/confirmation.html',
             controller: 'ConfirmationViewController',
             controllerAs: 'ConfirmationView',

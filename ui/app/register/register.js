@@ -9,26 +9,28 @@ function RegisterViewController($state, AuthenticationService) {
 
 ConfirmationViewController.$inject = ['$state', '$http', '$timeout'];
 function ConfirmationViewController($state, $http, $timeout) {
-    var email = $state.params.email;
+    var id = $state.params.id;
     var token = $state.params.token;
+    this.success = false;
 
     init.call(this);
 
     function init() {
-        if (!email) {
+        if (!id) {
             // show error message
             return
         }
-        $http.post('/api/activate/' + email, {token: token}).then(
+        $http.post('/api/activate/' + id, {token: token}).then(
             function(response) {
-            //show success message
+
+            this.success = true;
             $timeout(function() {
                 $state.go('home.login');
             }, 3000);
 
-        }, function(response) {
+        }.bind(this), function(response) {
 
-        });
+        }.bind(this));
     }
 }
 

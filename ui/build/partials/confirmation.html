@@ -1,5 +1,11 @@
 <div class="col-md-4 col-md-offset-4 margin-top-lg">
     <div class="alert alert-success">
-         We sent and activation email to <strong>{{ConfirmationView.email}}</strong>. Click on the included link to confirm your email and gain access to the application.
+         <p class="text-center" ng-show="!ConfirmationView.success">
+            Activating your account...
+         </p>
+         <p class="text-center" ng-show="ConfirmationView.success">
+            You're account has been activated! You can go ahead and login.
+         </p>
+        <loading-indicator></loading-indicator>
     </div>
 </div>

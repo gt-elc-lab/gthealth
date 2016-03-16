@@ -31,6 +31,7 @@ gthealth
     .directive('responseCard', directives.ResponseCard)
     .directive('loadingIndicator', directives.DataLoadingIndicator)
 
+    .controller('MainViewController', controllers.MainViewController)
     .controller('FeedViewController', controllers.FeedViewController)
     .controller('ReplyViewController', controllers.ReplyViewController);
 
@@ -73,7 +74,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/about.html'
         })
         .state('home.confirmation', {
-            url: '/confirmation/:email?token',
+            url: '/confirmation/:id?token',
             templateUrl: 'partials/confirmation.html',
             controller: 'ConfirmationViewController',
             controllerAs: 'ConfirmationView',
@@ -108,6 +109,7 @@ gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
 exports.FeedViewController = FeedViewController;
 exports.ReplyViewController = ReplyViewController;
+exports.MainViewController = MainViewController;
 
 
 FeedViewController.$inject = ['$state', '$http', 'Post', 'AuthenticationService', 'CurrentUserService'];
@@ -115,8 +117,17 @@ function FeedViewController($state, $http, Post, AuthenticationService, CurrentU
     this.posts = Post.query();
 }
 
-ReplyViewController.$inject = ['$state', 'Post', '$timeout', 'ResponseListModel', 'CurrentUserService'];
-function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentUserService) {
+MainViewController.$inject = ['$state', 'AuthenticationService'];
+function MainViewController($state, AuthenticationService) {
+
+    this.logout = function() {
+        AuthenticationService.logout();
+        $state.go('home');
+    };
+}
+
+ReplyViewController.$inject = ['$state', '$http','$timeout', 'Post', 'ResponseListModel', 'CurrentUserService'];
+function ReplyViewController($state, $http, $timeout, Post, ResponseListModel, CurrentUserService) {
     var currentUser = CurrentUserService.getCurrentUser();
     this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
     this.responses = ResponseListModel;
@@ -130,9 +141,12 @@ function ReplyViewController($state, Post, $timeout, ResponseListModel, CurrentU
 
     function respond(message) {
         this.successMessage.visible = true;
-        $timeout(function() {
-            $state.go('main');
-        }, 1500);
+        $http.post('/api/respond/' + this.post._id, {message: message.content})
+            .then(function(response) {
+                $timeout(function() {
+                    $state.go('main.feed');
+                }, 2000);
+            })
     }
 }
 },{}],3:[function(require,module,exports){
@@ -319,26 +333,28 @@ function RegisterViewController($state, AuthenticationService) {
 
 ConfirmationViewController.$inject = ['$state', '$http', '$timeout'];
 function ConfirmationViewController($state, $http, $timeout) {
-    var email = $state.params.email;
+    var id = $state.params.id;
     var token = $state.params.token;
+    this.success = false;
 
     init.call(this);
 
     function init() {
-        if (!email) {
+        if (!id) {
             // show error message
             return
         }
-        $http.post('/api/activate/' + email, {token: token}).then(
+        $http.post('/api/activate/' + id, {token: token}).then(
             function(response) {
-            //show success message
+
+            this.success = true;
             $timeout(function() {
                 $state.go('home.login');
             }, 3000);
 
-        }, function(response) {
+        }.bind(this), function(response) {
 
-        });
+        }.bind(this));
     }
 }
 
@@ -372,6 +388,7 @@ function CurrentUserService() {
     };
 }
 
+
 AuthenticationService.$inject = ['$http', '$q', 'CurrentUserService'];
 function AuthenticationService($http, $q, CurrentUserService) {
 
@@ -388,7 +405,7 @@ function AuthenticationService($http, $q, CurrentUserService) {
     };
 
     this.logout = function() {
-
+        CurrentUserService.setCurrentUser(null);
     };
 
     this.register = function(email, password) {

@@ -13,6 +13,7 @@ function CurrentUserService() {
     };
 }
 
+
 AuthenticationService.$inject = ['$http', '$q', 'CurrentUserService'];
 function AuthenticationService($http, $q, CurrentUserService) {
 
@@ -29,7 +30,7 @@ function AuthenticationService($http, $q, CurrentUserService) {
     };
 
     this.logout = function() {
-
+        CurrentUserService.setCurrentUser(null);
     };
 
     this.register = function(email, password) {

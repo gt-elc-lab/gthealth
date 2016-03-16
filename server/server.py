@@ -1,5 +1,6 @@
 import flask
 from flask.ext.cors import CORS
+import bson
 import json
 
 import model
@@ -32,10 +33,10 @@ def register():
     user.hash_password(password)
     user.create_activation_token()
     user.save()
-    # mail = emailer.Emailer()
-    # message = 'localhost:5000/api/activate/{token}'.format(
-    #     token=user.activation_token)
-    # mail.send_text(user.email, [user.email], message)
+    mail = emailer.Emailer()
+    message = 'localhost:4000/#/home/confirmation/{_id}?{token}'.format(
+        _id=str(user.id), token=user.activation_token)
+    mail.send_text(user.email, [user.email], message)
     return flask.jsonify(make_user_response(user))
 
 
@@ -55,10 +56,11 @@ def login():
     return flask.jsonify(make_user_response(user))
 
 
-@api.route('/activate/<string:email>', methods=['POST'])
-def activate(email):
+@api.route('/activate/<string:_id>', methods=['POST'])
+def activate(_id):
     token = flask.request.json.get('token')
-    user = model.User.objects(email=email, activation_token=token).first()
+    user = model.User.objects(id=bson.objectid.ObjectId(_id),
+            activation_token=token).first()
     if not user:
         flask.abort(400)
     user.activated = True
@@ -101,15 +103,15 @@ def get_post(r_id):
     return model.Post.objects.get(r_id=r_id).to_json()
 
 
-@api.route('/respond/<string:r_id>/<string:user_id>')
-def respond(r_id, user_id):
+@api.route('/respond/<string:r_id>', methods=['POST'])
+def respond(r_id):
     post = model.Post.objects.get(r_id=r_id)
-    message = flask.request.args.get('message')
+    message = flask.request.json.get('message')
     reddit_bot = pipeline.bot.RedditBot()
-    reddit_bot.comment(r_id, message)
+    # reddit_bot.comment(r_id, message)
     post.resolved = True
     post.save()
-    return  flask.jsonify({'status': 'success'})
+    return flask.jsonify({'status': 'success'})
 
 
 @api.route('/post/<string:r_id>', methods=['DELETE'])
