@@ -14,6 +14,7 @@ MAIL_SETTINGS = {
 
 TEST_DB_URI = 'mongodb://test:gthealthtest@ds015919.mlab.com:15919/gthealth_test'
 ACTIVATION_LINK = 'localhost:4000/#/home/confirmation/{_id}/{token}'
+PROD_ACTIVATION_LINK = 'www.george.gatech.edu/gthealth/#/home/confirmation/{_id}/{token}'
 
 SUBREDDITS = [
             {'name': 'McGill University', 'subreddit': 'mcgill'},

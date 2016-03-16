@@ -35,7 +35,7 @@ def register():
     user.create_activation_token()
     user.save()
     mail = emailer.Emailer()
-    message = config.ACTIVATION_LINK.format(_id=str(user.id), token=user.activation_token)
+    message = config.PROD_ACTIVATION_LINK.format(_id=str(user.id), token=user.activation_token)
     mail.send_text(user.email, [user.email], message)
     return flask.jsonify(make_user_response(user))
 
