@@ -14,6 +14,8 @@ class Emailer(object):
         return
 
     def send_text(self, recipients, subject, text):
+        if not isinstance(recipients, list):
+            recipients = [recipients]
         message = '''\\nFrom: {}\nTo: {}\nSubject: {}\n\n{}'''.format(
             self.username, ', '.join(recipients), subject, text)
         self.server.sendmail(self.username, recipients, message)
