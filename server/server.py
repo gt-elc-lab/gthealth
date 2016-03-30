@@ -23,6 +23,7 @@ def make_user_response(model):
         'email': model.email,
     }
 
+
 @api.route('/register', methods=['POST'])
 def register():
     email = flask.request.json.get('email')
@@ -130,5 +131,5 @@ application.register_blueprint(api, url_prefix='/api')
 application.register_blueprint(label_server, url_prefix='/label')
 
 if __name__ == '__main__':
-    application.debug = True
+    # application.debug = True
     application.run('0.0.0.0', 80)
