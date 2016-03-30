@@ -2,6 +2,7 @@ import flask
 from flask.ext.cors import CORS
 import bson
 import json
+from threading import Thread
 
 import config
 import model
@@ -36,7 +37,8 @@ def register():
     user.save()
     mail = emailer.Emailer()
     message = config.PROD_ACTIVATION_LINK.format(_id=str(user.id), token=user.activation_token)
-    mail.send_text(user.email, [user.email], message)
+    thr = Thread(target=mail.send_text, args=[[user.email], message])
+    thr.start()
     return flask.jsonify(make_user_response(user))
 
 
@@ -108,7 +110,9 @@ def respond(r_id):
     post = model.Post.objects.get(r_id=r_id)
     message = flask.request.json.get('message')
     reddit_bot = pipeline.bot.RedditBot()
+    # thr = Thread(target=reddit_bot.comment, args=[r_id, message])
     # reddit_bot.comment(r_id, message)
+    # thr.start()
     post.resolved = True
     post.save()
     return flask.jsonify({'status': 'success'})
@@ -127,4 +131,4 @@ application.register_blueprint(label_server, url_prefix='/label')
 
 if __name__ == '__main__':
     application.debug = True
-    application.run('0.0.0.0', port=80)
+    application.run()
