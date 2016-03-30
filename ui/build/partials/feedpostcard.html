@@ -1,7 +1,9 @@
 <div class="panel panel-primary">
-    <div class="panel-heading">{{post.title}}</div>
+    <div class="panel-heading">
+        <h3 class="">{{post.title}}</h3>
+        <p class="">{{vm.date}}</p></div>
     <div class="panel-body">
-        {{post.content | limitTo:textLimit}} <button
+        <p class="show-white-space">{{post.content | limitTo:textLimit}}</p> <button
             class="btn btn-xs btn-info"
             ng-show="shouldShowButton"
             ng-click='show()'> {{textPrompt}}</button>

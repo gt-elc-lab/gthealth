@@ -34,6 +34,14 @@
     margin-top: 70px;
 }
 
+.inline {
+    display: inline-block;
+}
+
+.show-white-space {
+    white-space: pre-wrap;
+}
+
 
 /* Bootswatch overrides*/
 .navbar {

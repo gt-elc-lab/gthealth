@@ -39,7 +39,7 @@ require('./register');
 
 gthealth.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
     $httpProvider.interceptors.push(function() {
-        var apiUrl = 'http://52.91.203.213:80';
+        var apiUrl = 'http://localhost:5000';
         return {
             request: function(config) {
                 if (config.url.startsWith('/api')) {

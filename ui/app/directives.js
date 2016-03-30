@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 exports.ResponseCard = ResponseCard;
 exports.FeedPostCard = FeedPostCard;
 exports.DataLoadingIndicator = DataLoadingIndicator;
@@ -38,23 +40,27 @@ function ResponseCard() {
 
 
 FeedPostCard.$inject = ['$state'];
-function FeedPostCard() {
+function FeedPostCard($state) {
     return {
         scope: {
             post: '='
         },
         restrict: 'AE',
         templateUrl: 'partials/feedpostcard.html',
+        // link: function($scope, $element, $attrs) {
+        //     $scope.$on('$destroy', function() {
+        //         $element.remove();
+        //     });
+        // },
         link: function($scope, $element, $attrs) {
-            $scope.$on('$destroy', function() {
-                $element.remove();
-            });
-        },
-        controller: function($scope, $state) {
             var textLimit = 500;
             var showMoreText = 'show more';
             var showLessText = 'show less';
 
+
+            $scope.vm = {};
+            $scope.vm.date = moment($scope.post.created.$date)
+                .format("dddd, MMMM Do, h:mm a");
             $scope.textLimit = textLimit;
             $scope.textPrompt = showMoreText;
             $scope.shouldShowButton = $scope.post.content.length > textLimit;

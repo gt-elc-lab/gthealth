@@ -96,7 +96,7 @@ def handle_authentication_error(error):
 
 @api.route('/post', methods=['GET'])
 def get_posts():
-    posts = model.Post.objects(resolved=False).to_json()
+    posts = model.Post.objects(resolved=False).order_by('-created')[:10].to_json()
     return flask.Response(posts,  mimetype='apilication/json')
 
 

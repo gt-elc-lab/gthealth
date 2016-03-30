@@ -1,8 +1,12 @@
 <div class="col-md-12 first-child-padding">
-    <div class="margin-top-lg">
-        <loading-indicator></loading-indicator>
-    </div>
-    <div class="col-md-6 col-md-offset-3 first-child-padding">
+
+    <div class="col-md-6 col-md-offset-3">
+        <div class="page-header">
+            <h1 class="text-center">Latest submissions</h1>
+        </div>
+        <div class="margin-top-lg">
+            <loading-indicator></loading-indicator>
+        </div>
         <feed-post-card ng-repeat="post in FeedView.posts" post="post">
         </feed-post-card>
     </div>

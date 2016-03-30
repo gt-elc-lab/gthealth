@@ -1,4 +1,4 @@
-
+var moment = require('moment');
 exports.FeedViewController = FeedViewController;
 exports.ReplyViewController = ReplyViewController;
 exports.MainViewController = MainViewController;
@@ -21,9 +21,21 @@ function MainViewController($state, AuthenticationService) {
 ReplyViewController.$inject = ['$state', '$http','$timeout', 'Post', 'ResponseListModel', 'CurrentUserService'];
 function ReplyViewController($state, $http, $timeout, Post, ResponseListModel, CurrentUserService) {
     var currentUser = CurrentUserService.getCurrentUser();
-    this.post = $state.params.post ? $state.params.post : Post.get({_id: $state.params._id});
-    this.responses = ResponseListModel;
+    this.vm = {};
+    this.post = $state.params.post;
+    if (!this.post) {
+        this.post = Post.get({_id: $state.params._id})
+        this.post.$promise.then(function(response) {
+            this.vm.date = moment(this.post.created.$date)
+                .format("dddd, MMMM Do, h:mm a");
+            }.bind(this))
+    }
+    else {
+        this.vm.date = this.vm.date = moment(this.post.created.$date)
+                .format("dddd, MMMM Do, h:mm a");
+    }
 
+    this.responses = ResponseListModel;
     this.successMessage = {
         visible: false,
         text: "Reply sent!"
